@@ -13,6 +13,8 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 use UnitEnum;
 
 class KelasResource extends Resource
@@ -48,6 +50,20 @@ class KelasResource extends Resource
         return [
             //
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        if ($user->isGuruJurusan() && $user->jurusan_id) {
+            $query->where('jurusan_id', $user->jurusan_id);
+        }
+
+        return $query;
     }
 
     public static function getPages(): array
